@@ -1,0 +1,13 @@
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const genAccessToken = (user) => {
+  return jwt.sign(user, process.env.JWT_ACCESS_SECRET, { expiresIn: "5m" });
+};
+
+const genRefreshToken = (user) => {
+  return jwt.sign(user, process.env.JWT_ACCESS_SECRET, { expiresIn: "7d" });
+};
+
+module.exports = { genAccessToken, genRefreshToken };
