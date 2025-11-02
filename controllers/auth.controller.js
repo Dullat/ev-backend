@@ -127,7 +127,8 @@ const loginUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const user = await userModel.findById(req.userID);
+  if (!req.body.userId) throw new BadRequestError("Please Provide user id");
+  const user = await userModel.findById(req.body.userId);
   res.status(200).json({
     success: true,
     message: "User found successfully",

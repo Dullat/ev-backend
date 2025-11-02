@@ -7,7 +7,7 @@ const genAccessToken = (user) => {
 };
 
 const genRefreshToken = (user) => {
-  return jwt.sign(user, process.env.JWT_ACCESS_SECRET, { expiresIn: "7d" });
+  return jwt.sign(user, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 };
 
 module.exports = { genAccessToken, genRefreshToken };
