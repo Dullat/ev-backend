@@ -81,8 +81,9 @@ const updateUserNameById = async (req, res) => {
   });
 };
 
-const updateUserFavouriteStations = async (req, res) => {
-  const { userId, operationType, stationId } = req.body;
+const updateUserFavouriteStationsById = async (req, res) => {
+  const { operationType, stationId } = req.body;
+  const { userId } = req.params;
 
   if (!userId || !stationId || !["add", "remove"].includes(operationType))
     throw new BadRequestError("User id or operation type is missing");
@@ -109,8 +110,9 @@ const updateUserFavouriteStations = async (req, res) => {
   });
 };
 
-const updatedUserProfileImage = async (req, res) => {
-  const { userId, profileImageUrl } = req.body;
+const updatedUserProfileImageById = async (req, res) => {
+  const { profileImageUrl } = req.body;
+  const { userId } = req.params;
 
   if (!userId || !profileImageUrl)
     throw new BadRequestError("User id or imageUrl missing");
@@ -134,7 +136,7 @@ const updatedUserProfileImage = async (req, res) => {
 module.exports = {
   getUserById,
   getAllUsers,
-  updatedUserProfileImage,
+  updatedUserProfileImageById,
   updateUserNameById,
-  updateUserFavouriteStations,
+  updateUserFavouriteStationsById,
 };
