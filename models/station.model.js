@@ -6,9 +6,21 @@ const stationSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide a name"],
     },
-    address: {
+    street: {
       type: String,
       required: [true, "Please provide an address"],
+    },
+    city: {
+      type: String,
+      required: [true, "Please provide a city"],
+    },
+    state: {
+      type: String,
+      required: [true, "Please provide a state"],
+    },
+    country: {
+      type: String,
+      required: [true, "Please provide a country"],
     },
     location: {
       type: {
