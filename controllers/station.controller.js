@@ -18,21 +18,6 @@ const addStation = async (req, res) => {
   } = req.body;
 
   const userId = req.decoded._id;
-  console.log(req.decoded);
-
-  if (
-    !name ||
-    !street ||
-    !city ||
-    !state ||
-    !country ||
-    !coordinates ||
-    !chargerType ||
-    !pricePerKwh ||
-    !ownerName
-  ) {
-    throw new BadRequestError("Please provide all values");
-  }
 
   const location = {
     type: "Point",
