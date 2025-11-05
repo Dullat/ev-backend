@@ -82,7 +82,7 @@ const stationSchema = new mongoose.Schema(
       },
     },
     addedBy: {
-      type: mongoose.Schema.Type.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "Pleaase provide a user"],
     },
@@ -90,6 +90,6 @@ const stationSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-staionSchema.index({ location: "2dsphere" });
+stationSchema.index({ location: "2dsphere" });
 
 module.exports = mongoose.model("Station", stationSchema);
