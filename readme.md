@@ -48,6 +48,9 @@ Here’s the list of npm packages to install and why:
 | **socket.io**                      | Enable live updates for charger availability         |
 | **multer**                         | Handle image uploads (before sending to Cloudinary)  |
 | **cloudinary**                     | Cloud storage for images                             |
+| **Joi**                            | Validations for incoming req data                    |
+| **Node-geocoder**                  | To Utilize Nominatim                                 |
+| **Nominatim**                      | Reverse Coordinates to get address                   |
 
 ---
 
@@ -98,6 +101,11 @@ Will make it secure by using a **dual JWT system**:
 │   ├── PATCH /:id          → update availability/details (owner only)
 │   ├── DELETE /:id         → remove station (admin/owner)
 │
+├── Favorite/
+│   ├── GET /count/:stationId       → get total count of total favs of a station
+│   ├── GET /:stationId             → get Favs of user
+│   ├── POST/:stationId             → toggle: add or remove from favorites
+│
 └── reviews/
     ├── GET /station/:stationId
     ├── POST /station/:stationId
@@ -115,17 +123,26 @@ backend/
 │
 ├── controllers/
 │   |── auth.controller.js
-|   └── user.controller.js  <-- done but routes are not set yet
+|   ├── user.controller.js
+│   ├── station.controller.js
+│   ├── favorite.controller.js
 │
 ├── models/
 │   ├── user.model.js
-│   └── userToken.model.js
+│   ├── userToken.model.js
+│   ├── station.model.js
+│   ├── favorite.model.js
 │
 ├── middleware/
-│   └── auth.middleware.js
+│   ├── auth.middleware.js
+│   ├── errorhandler.middleware.js
+│   ├── validate.request.middleware.js
+│   ├── validate.station.middleware.js
 │
 ├── routes/
-│   └── auth.routes.js
+│   ├── auth.route.js
+│   │ favorite.route.js
+│   ├── station.route.js
 │
 ├── utility/
 │   └── genToken.js
@@ -135,7 +152,16 @@ backend/
 │   ├── InternalServer.error.js
 │   └── Unauthenticated.error.js
 │
-├── server.js
+├── services/
+│   ├── GeCoder.js
+│
+├── validations/
+│   └── station.validation.js
+│
+├── server.js/
+│
+├── app.js/
+│
 └── .env
 ```
 
