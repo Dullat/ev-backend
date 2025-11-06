@@ -1,4 +1,5 @@
 const stationModel = require("../models/station.model");
+const favoriteModel = require("../models/favorite.model");
 const BadRequestError = require("../errors/BadRequest.error");
 const NotFoundError = require("../errors/NotFound.error");
 const GeCoder = require("../services/GeCoder");
@@ -68,7 +69,81 @@ const getStationById = async (req, res) => {
   });
 };
 
+const getStationsByQuery = async (req, res) => {
+  const { state, city, country } = req.query;
+  console.log(state);
+
+  const mongooseQuery = {};
+  if (state) mongooseQuery.state = state.toLowerCase();
+  if (city) mongooseQuery.city = city.toLowerCase();
+  if (country) mongooseQuery.country = country.toLowerCase();
+
+  console.log(mongooseQuery);
+  const stations = await stationModel.find(mongooseQuery);
+
+  if (!stations) throw new NotFoundError("Stations not found");
+
+  res.status(200).json({
+    success: true,
+    message: "Stations found successfully",
+    stations: stations,
+  });
+};
+
+const getStationsByCoords = async (req, res) => {
+  const { lat, lon, dist } = req.query;
+
+  if (!lat || !lon) throw new BadRequestError("Please provide coordinates");
+
+  if (lat < -90 || lat > 90 || lon < -180 || lon > 180)
+    throw new BadRequestError("Please provide valid coordinates");
+
+  const stations = await stationModel.find({
+    location: {
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates: [parseFloat(lon), parseFloat(lat)],
+        },
+        $maxDistance: parseFloat(dist) || 200,
+      },
+    },
+  });
+
+  if (!stations) throw new NotFoundError("Stations not found");
+
+  res.status(200).json({
+    success: true,
+    message: "Stations found successfully",
+    stations: stations,
+  });
+};
+
+const deleteStation = async (req, res) => {
+  const { stationId } = req.params;
+  if (!stationId) throw new BadRequestError("Please provide station id");
+
+  const station = await stationModel.findById(stationId);
+
+  if (!station) throw new NottFoundError("Station not found");
+
+  if (station.addedBy.toString() !== req.decoded._id)
+    throw new BadRequestError("You are not allowed to delete this station");
+
+  await favoriteModel.deleteMany({ station: stationId });
+
+  await stationModel.findByIdAndDelete(stationId);
+
+  res.status(200).json({
+    success: true,
+    message: "Station deleted successfully",
+  });
+};
+
 module.exports = {
   addStation,
   getStationById,
+  getStationsByQuery,
+  getStationsByCoords,
+  deleteStation,
 };
