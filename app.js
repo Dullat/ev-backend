@@ -7,6 +7,7 @@ const notFoundError = require("./errors/NotFound.error");
 
 const authRouter = require("./routes/auth.route");
 const stationRouter = require("./routes/station.route");
+const favoriteRouter = require("./routes/favorite.route");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 
 app.use("/", authRouter);
 app.use("/api/station", stationRouter);
+app.use("/api/favorite", favoriteRouter);
 
 app.get("/status", (req, res) => {
   res.json({
