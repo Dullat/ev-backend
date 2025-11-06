@@ -5,22 +5,27 @@ const stationSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Please provide a name"],
+      lowercase: true,
     },
     street: {
       type: String,
       required: [true, "Please provide an address"],
+      lowercase: true,
     },
     city: {
       type: String,
       required: [true, "Please provide a city"],
+      lowercase: true,
     },
     state: {
       type: String,
       required: [true, "Please provide a state"],
+      lowercase: true,
     },
     country: {
       type: String,
       required: [true, "Please provide a country"],
+      lowercase: true,
     },
     location: {
       type: {
@@ -91,5 +96,6 @@ const stationSchema = new mongoose.Schema(
 );
 
 stationSchema.index({ location: "2dsphere" });
+stationSchema.index({ city: 1, state: 1, country: 1 });
 
 module.exports = mongoose.model("Station", stationSchema);
