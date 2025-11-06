@@ -27,4 +27,13 @@ const stationSchema = joi.object({
     }),
 });
 
-module.exports = stationSchema;
+const stationQuerySchema = joi.object({
+  city: joi.string().min(3).max(30).optional(),
+  state: joi.string().min(3).max(30).optional(),
+  country: joi.string().min(3).max(30).optional(),
+});
+
+module.exports = {
+  stationQuerySchema,
+  stationSchema,
+};

@@ -1,4 +1,4 @@
-const stationSchema = require("../validations/station.validation");
+const { stationSchema } = require("../validations/station.validation");
 const BadRequestError = require("../errors/custom.error");
 
 const validateAddStationRequest = async (req, res, next) => {
