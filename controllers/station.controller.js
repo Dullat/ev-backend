@@ -91,7 +91,7 @@ const getStationsByQuery = async (req, res) => {
 };
 
 const getStationsByCoords = async (req, res) => {
-  const { lat, lon, dist } = req.query;
+  const { lat, lon, rad } = req.query;
 
   if (!lat || !lon) throw new BadRequestError("Please provide coordinates");
 
@@ -105,7 +105,7 @@ const getStationsByCoords = async (req, res) => {
           type: "Point",
           coordinates: [parseFloat(lon), parseFloat(lat)],
         },
-        $maxDistance: parseFloat(dist) || 200,
+        $maxDistance: parseFloat(rad) || 200,
       },
     },
   });

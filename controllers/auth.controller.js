@@ -1,4 +1,5 @@
 const BadRequestError = require("../errors/BadRequest.error.js");
+const NotFoundError = require("../errors/NotFound.error.js");
 const InernalServerError = require("../errors/InternalServer.error.js");
 const userModel = require("../models/user.model.js");
 const userTokenModel = require("../models/userToken.model.js");
@@ -60,7 +61,6 @@ const createUser = async (req, res) => {
       email: user.email,
       profileImage: user.profileImage,
       role: user.role,
-      favorites: user.favorites || "",
     },
   });
 };
@@ -121,14 +121,13 @@ const loginUser = async (req, res) => {
       email: user.email,
       profileImage: user.profileImage,
       role: user.role,
-      favorites: user.favorites || "",
     },
   });
 };
 
 const getUser = async (req, res) => {
-  if (!req.body.userId) throw new BadRequestError("Please Provide user id");
-  const user = await userModel.findById(req.body.userId);
+  if (!req.decoded._id) throw new BadRequestError("Please Provide user id");
+  const user = await userModel.findById(req.decoded._id);
   res.status(200).json({
     success: true,
     message: "User found successfully",
@@ -139,7 +138,6 @@ const getUser = async (req, res) => {
       email: user.email,
       profileImage: user.profileImage,
       role: user.role,
-      favorites: user.favorites || "",
     },
   });
 };
@@ -150,9 +148,56 @@ const logoutUser = async (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 
+const refreshToken = async (req, res) => {
+  const { _id, email } = req.decoded;
+  const oldRefreshToken = req.cookies.refreshToken;
+
+  const accessToken = genAccessToken({ _id, email });
+  const refreshToken = genRefreshToken({ _id, email });
+
+  const newRefreshToken = await userTokenModel.findOneAndUpdate(
+    {
+      userId: _id,
+      refreshToken: oldRefreshToken,
+    },
+    {
+      refreshToken: refreshToken,
+      ip: req.ip,
+      lastUsed: Date.now(),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+    },
+  );
+
+  if (!newRefreshToken)
+    throw new InternalServerError("Failed to update refresh token");
+
+  res
+    .cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      maxAge: 1000 * 60 * 5,
+    })
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      path: "api/auth/",
+    });
+
+  res.status(201).json({
+    success: true,
+    message: "Token refresh successfully",
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+  });
+};
+
 module.exports = {
   createUser,
   getUser,
   loginUser,
   logoutUser,
+  refreshToken,
 };
